@@ -4,6 +4,7 @@ from django.forms import ModelForm
 from django import forms
 from bs4 import BeautifulSoup
 import requests
+from django.contrib import messages
 
 # Home Page Method
 def home(request):
@@ -80,4 +81,23 @@ def post_create_view(request):
         'form' : form
     }
     
+    # Display the Post Creation Page
     return render(request, 'posts./post_create.html', context)
+
+# Delete Post Method
+def post_delete_view(request, pk):
+    # Get the Post from the Database
+    post = Post.objects.get(id=pk)
+    # If the User sends the form
+    if request.method == 'POST':
+        # Delete the post
+        post.delete()
+        # Display a success message to the User
+        messages.success(request, 'Post deleted')
+        # Send the User back to the home page
+        return redirect('home')
+        
+    context = {
+        'post': post
+    }
+    return render(request, 'posts/post_delete.html', context)
