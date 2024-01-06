@@ -6,15 +6,26 @@ from django.contrib import messages
 from .forms import *
 
 # Home Page Method
-def home(request):
-    # Get all Posts from the Database
-    posts = Post.objects.all()
+def home(request, tag=None): 
+    if tag:
+        # Get the Posts related to a tag from the Database useing filter method
+        posts = Post.objects.filter(tags__slug=tag)
+        tag = get_object_or_404(Tag, slug=tag)
+    else: 
+        # Get all Posts from the Database  
+        posts = Post.objects.all()
+    
+    # Get all Tags from the Database   
+    categories = Tag.objects.all()
     
     context = {
-        'posts' : posts
+        'posts' : posts,
+        'categories' : categories,
+        'tag' : tag,
     }
     
     return render(request, "posts/home.html", context)
+    
 
 # Create Post Method
 def post_create_view(request):
@@ -57,6 +68,9 @@ def post_create_view(request):
 
             # Save the form
             post.save()
+            # Save the Many to Many relationship
+            form.save_m2m()
+            
             # Send the user back to the home page
             return redirect('home')
             
