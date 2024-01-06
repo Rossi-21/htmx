@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect
 from .models import *
-from django.forms import ModelForm
-from django import forms
 from bs4 import BeautifulSoup
 import requests
 from django.contrib import messages
+from .forms import *
 
 # Home Page Method
 def home(request):
@@ -16,22 +15,6 @@ def home(request):
     }
     
     return render(request, "posts/home.html", context)
-
-class PostCreateForm(ModelForm):
-    class Meta:
-        # Select the model used in the form
-        model = Post
-        # Select the fields you wish to display
-        fields = ['url', 'body']
-        # Change the label if desired
-        labels = {
-            'body' : 'Caption'
-        }
-        # Add attributes to the form through widget functionality
-        widgets = {
-            'body' : forms.Textarea(attrs={'rows': 3, 'placeholder': 'Add a caption...', 'class': 'font1 text-4xl'}),
-            'url' : forms.TextInput(attrs={'placeholder': 'Add url...'}),
-        }
 
 # Create Post Method
 def post_create_view(request):
@@ -101,3 +84,29 @@ def post_delete_view(request, pk):
         'post': post
     }
     return render(request, 'posts/post_delete.html', context)
+
+# Edit Post Method
+def post_edit_view(request, pk):
+    # Get the Post from the Database
+    post = Post.objects.get(id=pk)
+    # Get the Form 
+    form = PostEditForm(instance=post)
+    # If the User send the form 
+    if request.method == 'POST':
+        # Use the Post Edit Form
+        form = PostEditForm(request.POST, instance=post)
+        # Validate the form
+        if form.is_valid():
+            # Save the form to the Database
+            form.save()
+            # Dispay a success message to the User
+            messages.success(request, 'Post updated')
+            # Send the User back to the home page
+            return redirect('home')
+            
+    context = {
+        'post' : post,
+        'form' : form
+    }
+    
+    return render(request, 'posts/post_edit.html', context)
