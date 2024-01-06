@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 from bs4 import BeautifulSoup
 import requests
@@ -69,8 +69,8 @@ def post_create_view(request):
 
 # Delete Post Method
 def post_delete_view(request, pk):
-    # Get the Post from the Database
-    post = Post.objects.get(id=pk)
+    # Get the Post from the Database or display a 404 page
+    post = get_object_or_404(Post, id=pk)
     # If the User sends the form
     if request.method == 'POST':
         # Delete the post
@@ -87,8 +87,8 @@ def post_delete_view(request, pk):
 
 # Edit Post Method
 def post_edit_view(request, pk):
-    # Get the Post from the Database
-    post = Post.objects.get(id=pk)
+    # Get the Post from the Database or display a 404 page
+    post = get_object_or_404(Post, id=pk)
     # Get the Form 
     form = PostEditForm(instance=post)
     # If the User send the form 
@@ -110,3 +110,14 @@ def post_edit_view(request, pk):
     }
     
     return render(request, 'posts/post_edit.html', context)
+
+# Display Post Method
+def post_page_view(request, pk):
+    # Get the post from the Database or display a 404 page
+    post = get_object_or_404(Post, id=pk)
+    
+    context = {
+        'post' : post
+    }
+    return render(request, 'posts/post_page.html', context)
+
