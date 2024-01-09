@@ -38,8 +38,31 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # AllAUTH apps
+    'django.contrib.sites',            
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # Our installed apps
     'test_app',
 ]
+
+# ALLAUTH
+SITE_ID = 1
+
+# ALLAUTH Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': '123',
+            'secret': '456',
+            'key': ''
+        }
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -49,6 +72,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # ALLAUTH
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'htmx.urls'
@@ -67,6 +92,13 @@ TEMPLATES = [
             ],
         },
     },
+]
+# ALLAUTH
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 WSGI_APPLICATION = 'htmx.wsgi.application'

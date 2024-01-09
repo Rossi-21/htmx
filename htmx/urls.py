@@ -20,7 +20,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    # Access to Admin Dashboard
     path('admin/', admin.site.urls),
+    # ALLAUTH
+    path('accounts/', include('allauth.urls')),
+    # Our apps
     path('',include('test_app.urls')),
 ] 
 
