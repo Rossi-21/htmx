@@ -25,7 +25,8 @@ urlpatterns = [
     # ALLAUTH
     path('accounts/', include('allauth.urls')),
     # Our apps
-    path('',include('test_app.urls')),
+    path('', include('test_app.urls')),
+    path('user/', include('users_app.urls')),
 ] 
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
