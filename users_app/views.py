@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import *
 
@@ -19,7 +21,7 @@ def profile_view(request, username=None):
     }
     
     return render(request, 'profile.html', context)
-
+@login_required
 def profile_edit(request):
     form = ProfileForm(instance=request.user.profile)
     
@@ -28,13 +30,20 @@ def profile_edit(request):
         if form.is_valid():
             form.save()
             return redirect('profile')
+    if request.path == reverse('profile-onboarding'):
+        template = 'profile_onboarding.html'
+    else:
+        template = 'profile_edit.html'
+        
     
     context = {
-        'form' : form
+        'form' : form,
+        'template' : template
     }
     
     return render(request, 'profile_edit.html', context)
 
+@login_required
 def profile_delete(request):
     user = request.user
     

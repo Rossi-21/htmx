@@ -3,6 +3,7 @@ from .models import *
 from bs4 import BeautifulSoup
 import requests
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .forms import *
 
 # Home Page Method
@@ -28,6 +29,7 @@ def home(request, tag=None):
     
 
 # Create Post Method
+@login_required
 def post_create_view(request):
     # Grab the form for the View
     form = PostCreateForm()
@@ -65,11 +67,12 @@ def post_create_view(request):
             artist = find_artist[0].text.strip()
             # Attach the artist to the post variable
             post.artist = artist
-
+            # Attach the author to the post variable as the current user
+            post.author = request.user
             # Save the form
             post.save()
             # Save the Many to Many relationship
-            form.save_m2m()
+            form.save_m2m() 
             
             # Send the user back to the home page
             return redirect('home')
@@ -82,9 +85,10 @@ def post_create_view(request):
     return render(request, 'posts./post_create.html', context)
 
 # Delete Post Method
+@login_required
 def post_delete_view(request, pk):
     # Get the Post from the Database or display a 404 page
-    post = get_object_or_404(Post, id=pk)
+    post = get_object_or_404(Post, id=pk, author=request.user)
     # If the User sends the form
     if request.method == 'POST':
         # Delete the post
@@ -100,9 +104,10 @@ def post_delete_view(request, pk):
     return render(request, 'posts/post_delete.html', context)
 
 # Edit Post Method
+@login_required
 def post_edit_view(request, pk):
     # Get the Post from the Database or display a 404 page
-    post = get_object_or_404(Post, id=pk)
+    post = get_object_or_404(Post, id=pk, author=request.user                                                                                                               )
     # Get the Form 
     form = PostEditForm(instance=post)
     # If the User send the form 
