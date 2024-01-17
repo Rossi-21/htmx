@@ -140,3 +140,10 @@ def post_page_view(request, pk):
     }
     return render(request, 'posts/post_page.html', context)
 
+def like_post(request, pk):
+    post = get_object_or_404(Post, id=pk)
+    
+    if post.author != request.user:
+        post.likes.add(request.user,)
+        
+    return redirect('post', post.id)
