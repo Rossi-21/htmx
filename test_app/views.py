@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse
 from .models import *
 from bs4 import BeautifulSoup
 import requests
@@ -148,6 +149,6 @@ def like_post(request, pk):
         if user_exist:
             post.likes.remove(request.user)
         else:
-            post.likes.add(request.user,)
+            post.likes.add(request.user)
         
-    return redirect('post', post.id)
+    return render(request, 'snipets/likes.html', {'post' : post})
