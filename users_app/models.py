@@ -33,3 +33,6 @@ class Profile(models.Model):
             name = self.user.username
         
         return name
+
+
+    
