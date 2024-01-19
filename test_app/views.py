@@ -142,8 +142,12 @@ def post_page_view(request, pk):
 
 def like_post(request, pk):
     post = get_object_or_404(Post, id=pk)
+    user_exist = post.likes.filter(username=request.user.username).exists()
     
     if post.author != request.user:
-        post.likes.add(request.user,)
+        if user_exist:
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user,)
         
     return redirect('post', post.id)
